@@ -1,2 +1,0 @@
-# LCS
-LCS Chrome Extention
