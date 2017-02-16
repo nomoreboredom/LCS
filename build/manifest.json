@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "RCR",
-  "description": "React, Chrome, and Redux example",
+  "name": "LCS Chrome Extension",
+  "description": "LCS Twitch.tv extension using React and Redux",
   "version": "0.0.0.1",
   "background": {
     "scripts": [
@@ -10,7 +10,7 @@
     "persistent": true
   },
   "browser_action": {
-    "default_title": "RCR Example",
+    "default_title": "LCS Channels",
     "default_popup": "popup.html"
   },
   "content_scripts": [

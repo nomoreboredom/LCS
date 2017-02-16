@@ -9,6 +9,7 @@
   "author": "Tyler Shaddix",
   "dependencies": {
     "react": "^0.14.3",
+    "react-cardstack": "^0.1.1",
     "react-chrome-redux": "0.0.7",
     "react-dom": "^0.14.3",
     "react-redux": "^4.0.0",

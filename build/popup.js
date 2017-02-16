@@ -63,7 +63,7 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _reactChromeRedux = __webpack_require__(191);
+	var _reactChromeRedux = __webpack_require__(194);
 
 	var _reactRedux = __webpack_require__(161);
 
@@ -19780,7 +19780,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -19791,6 +19791,8 @@
 
 	var _reactRedux = __webpack_require__(161);
 
+	var _reactCardstack = __webpack_require__(191);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -19800,80 +19802,144 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var App = function (_Component) {
-	  _inherits(App, _Component);
+	    _inherits(App, _Component);
 
-	  function App(props) {
-	    _classCallCheck(this, App);
+	    function App(props) {
+	        _classCallCheck(this, App);
 
-	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-	    _this.state = {
-	      nalcs1: [],
-	      nalcs2: [],
-	      riotgamesturkish: []
-	    };
-	    return _this;
-	  }
+	        _this.state = {
+	            channels: ['nalcs1', 'riotgamesturkish']
+	        };
 
-	  _createClass(App, [{
-	    key: 'pullLCSData',
-	    value: function pullLCSData(channel) {
-	      var url = 'https://api.twitch.tv/kraken/streams/' + channel + '?client_id=qf8via2w923otpjjcjo1jeg6slulq4';
-	      return fetch(url).then(function (response) {
-	        return response.json();
-	      });
+	        return _this;
 	    }
-	  }, {
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var _this2 = this;
 
-	      document.addEventListener('click', function () {
-	        _this2.props.dispatch({
-	          type: 'ADD_COUNT'
-	        });
-	      });
-	      this.pullLCSData('nalcs1').then(function (response) {
-	        _this2.setState({
-	          nalcs1: response.stream
-	        });
-	        _this2.pullLCSData('nalcs2').then(function (response) {
-	          _this2.setState({
-	            nalcs2: response.stream
-	          });
-	          _this2.pullLCSData('riotgamesturkish').then(function (response) {
-	            _this2.setState({
-	              riotgamesturkish: response.stream
+	    _createClass(App, [{
+	        key: 'checkIfChannelOnline',
+	        value: function checkIfChannelOnline(channel) {
+	            var url = 'https://api.twitch.tv/kraken/streams/' + channel + '?client_id=qf8via2w923otpjjcjo1jeg6slulq4';
+	            return fetch(url).then(function (response) {
+	                return response.json();
 	            });
-	          });
-	        });
-	      });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        'sdads sda a',
-	        this.state.riotgamesturkish.viewers,
-	        _react2.default.createElement(
-	          'div',
-	          null,
-	          'Click Count: ',
-	          this.props.count
-	        )
-	      );
-	    }
-	  }]);
+	        }
+	    }, {
+	        key: 'pullOfflineChannelData',
+	        value: function pullOfflineChannelData(channel) {
+	            var url = 'https://api.twitch.tv/kraken/channels/' + channel + '?client_id=qf8via2w923otpjjcjo1jeg6slulq4';
+	            return fetch(url).then(function (response) {
+	                return response.json();
+	            });
+	        }
+	    }, {
+	        key: 'buildChannelData',
+	        value: function buildChannelData(channelLiveStatus, channelRequested, channelData) {
+	            var channelTempData = [];
+	            if (channelLiveStatus) {
+	                channelTempData = channelData;
+	            } else {
+	                channelTempData = this.pullOfflineChannelData(channelRequested);
+	            }
+	            this.renderChannels(channelTempData);
+	        }
+	    }, {
+	        key: 'getData',
+	        value: function getData(channel) {
+	            var _this2 = this;
 
-	  return App;
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                channel,
+	                ' '
+	            );
+	            this.checkIfChannelOnline(channel).then(function (response) {
+	                var status = response.stream;
+	                if (status === null) {
+	                    console.log('kapalı');
+	                    _this2.buildChannelData(false, channel);
+	                } else {
+	                    console.log(response.stream);
+	                    _this2.buildChannelData(true, channel, response);
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'renderChannels',
+	        value: function renderChannels(data) {
+	            var _this3 = this;
+
+	            var channelItem = this.state.channels.map(function (item, key) {
+	                //let reference = 'content' + key
+	                return _react2.default.createElement(
+	                    _reactCardstack.Card,
+	                    { background: _this3.getRandomColor(), key: key },
+	                    _react2.default.createElement(
+	                        'h1',
+	                        null,
+	                        'Number cdsa sdsa sad1'
+	                    ),
+	                    _this3.getData(item)
+	                );
+	            });
+	            return channelItem;
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var _this4 = this;
+
+	            document.addEventListener('click', function () {
+	                _this4.props.dispatch({
+	                    type: 'ADD_COUNT'
+	                });
+	            });
+	            //  this.pullLCSData('nalcs1').then((response) => {
+	            //   this.setState({
+	            //       nalcs1: response.stream,
+	            //   });
+	            //   this.pullLCSData('nalcs2').then((response) => {
+	            //     this.setState({
+	            //         nalcs2: response.stream,
+	            //     });
+	            //     this.pullLCSData('riotgamesturkish').then((response) => {
+	            //       this.setState({
+	            //           riotgamesturkish: response.stream,
+	            //       });
+	            //     });
+	            //   });
+	            // });
+	        }
+	    }, {
+	        key: 'getRandomColor',
+	        value: function getRandomColor() {
+	            var hex = Math.floor(Math.random() * 0xFFFFFF);
+	            return "#" + ("000000" + hex.toString(16)).substr(-6);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            return _react2.default.createElement(
+	                _reactCardstack.CardStack,
+	                {
+	                    height: 200,
+	                    width: 200,
+	                    background: this.getRandomColor(),
+	                    hoverOffset: 0 },
+	                this.renderChannels()
+	            );
+	        }
+	    }]);
+
+	    return App;
 	}(_react.Component);
 
 	var mapStateToProps = function mapStateToProps(state) {
-	  return {
-	    count: state.count
-	  };
+	    return {
+	        count: state.count
+	    };
 	};
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(App);
@@ -21634,17 +21700,284 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.CardStack = exports.Card = undefined;
+
+	var _cardstack = __webpack_require__(192);
+
+	var _cardstack2 = _interopRequireDefault(_cardstack);
+
+	var _card = __webpack_require__(193);
+
+	var _card2 = _interopRequireDefault(_card);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.Card = _card2.default;
+	exports.CardStack = _cardstack2.default;
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var equalsZero = function equalsZero(num) {
+		return num === 0;
+	};
+	var errorMessage = 'CardStack component must have at least two child Card components. Please check the children of this CardStack instance.';
+
+	var CardStack = function (_React$Component) {
+		_inherits(CardStack, _React$Component);
+
+		function CardStack(props) {
+			_classCallCheck(this, CardStack);
+
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CardStack).call(this, props));
+
+			var childrenLength = props.children.length || 1;
+			var headerHeight = props.height / childrenLength;
+
+			if (childrenLength <= 1) throw new Error(errorMessage);
+
+			_this.initialTopOffsets = props.children.map(function (child, i) {
+				return equalsZero(i) ? 0 : headerHeight * i;
+			});
+
+			_this.state = {
+				topOffsets: _this.initialTopOffsets,
+				cardSelected: false
+			};
+			return _this;
+		}
+
+		_createClass(CardStack, [{
+			key: 'handleCardClick',
+			value: function handleCardClick(id, cb) {
+				var _this2 = this;
+
+				var initialState = {
+					topOffsets: [],
+					cardSelected: true
+				};
+				var cardSelected = this.state.cardSelected;
+
+
+				var nextState = function nextState(prev, offset, index) {
+					var newOffset = index === id ? 0 : _this2.props.height;
+					return {
+						cardSelected: cardSelected ? false : true,
+						topOffsets: [].concat(_toConsumableArray(prev.topOffsets), [cardSelected ? _this2.initialTopOffsets[index] : newOffset])
+					};
+				};
+
+				this.setState(this.state.topOffsets.reduce(nextState, initialState));
+
+				if (cb) cb(this.state.cardSelected, id);
+			}
+		}, {
+			key: 'renderCards',
+			value: function renderCards() {
+				var _this3 = this;
+
+				var cloneCard = function cloneCard(child, i) {
+					return _react2.default.cloneElement(child, {
+						key: i,
+						cardId: i,
+						hoverOffset: _this3.props.hoverOffset,
+						cardSelected: _this3.state.cardSelected,
+						height: _this3.props.height,
+						topOffset: _this3.state.topOffsets[i],
+						onClick: _this3.handleCardClick.bind(_this3)
+					});
+				};
+
+				return this.props.children.map(cloneCard);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var stackStyles = _extends({}, styles, {
+					background: this.props.background,
+					height: this.props.height,
+					width: this.props.width
+				});
+				return _react2.default.createElement(
+					'ul',
+					{ style: stackStyles },
+					this.renderCards()
+				);
+			}
+		}]);
+
+		return CardStack;
+	}(_react2.default.Component);
+
+	var styles = {
+		display: 'flex',
+		flexDirection: 'column',
+		position: 'relative',
+		overflow: 'hidden',
+		padding: 0,
+		margin: 0
+	};
+
+	CardStack.propTypes = {
+		background: _react2.default.PropTypes.string,
+		height: _react2.default.PropTypes.number,
+		hoverOffset: _react2.default.PropTypes.number,
+		width: _react2.default.PropTypes.number
+	};
+
+	CardStack.defaultProps = {
+		width: 350,
+		height: 600,
+		bgColor: 'f8f8f8',
+		hoverOffset: 30
+	};
+
+	exports.default = CardStack;
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Card = function (_React$Component) {
+		_inherits(Card, _React$Component);
+
+		function Card(props) {
+			_classCallCheck(this, Card);
+
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Card).call(this, props));
+
+			_this.state = {
+				hover: false
+			};
+			return _this;
+		}
+
+		_createClass(Card, [{
+			key: 'handleClick',
+			value: function handleClick() {
+				var _props = this.props;
+				var cardId = _props.cardId;
+				var cardClicked = _props.cardClicked;
+
+				this.props.onClick(cardId, cardClicked);
+				this.setState({ hover: false });
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var _this2 = this;
+
+				var _props2 = this.props;
+				var cardId = _props2.cardId;
+				var cardSelected = _props2.cardSelected;
+				var topOffset = _props2.topOffset;
+				var hoverOffset = _props2.hoverOffset;
+
+				var offset = cardId !== 0 && this.state.hover && !cardSelected ? hoverOffset : 0;
+				var transform = 'translate3d(0,' + (topOffset - offset) + 'px,0)';
+				var cardStyles = _extends({}, styles, {
+					background: this.props.background,
+					transform: transform,
+					WebkitTransform: transform,
+					height: this.props.height
+				});
+				return _react2.default.createElement(
+					'li',
+					{
+						style: cardStyles,
+						onClick: this.handleClick.bind(this),
+						onMouseEnter: function onMouseEnter() {
+							return _this2.setState({ hover: true });
+						},
+						onMouseLeave: function onMouseLeave() {
+							return _this2.setState({ hover: false });
+						} },
+					this.props.children
+				);
+			}
+		}]);
+
+		return Card;
+	}(_react2.default.Component);
+
+	var styles = {
+		position: 'absolute',
+		top: 0,
+		width: '100%',
+		cursor: 'pointer',
+		transition: '0.5s transform ease',
+		WebkitTransition: '-webkit-transform 0.5s ease'
+	};
+
+	exports.default = Card;
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.alias = exports.wrapStore = exports.Store = undefined;
 
-	var _Store = __webpack_require__(192);
+	var _Store = __webpack_require__(195);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _wrapStore = __webpack_require__(236);
+	var _wrapStore = __webpack_require__(239);
 
 	var _wrapStore2 = _interopRequireDefault(_wrapStore);
 
-	var _alias = __webpack_require__(237);
+	var _alias = __webpack_require__(240);
 
 	var _alias2 = _interopRequireDefault(_alias);
 
@@ -21655,7 +21988,7 @@
 	exports.alias = _alias2.default;
 
 /***/ },
-/* 192 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21666,11 +21999,11 @@
 	  value: true
 	});
 
-	var _assignIn = __webpack_require__(193);
+	var _assignIn = __webpack_require__(196);
 
 	var _assignIn2 = _interopRequireDefault(_assignIn);
 
-	var _constants = __webpack_require__(235);
+	var _constants = __webpack_require__(238);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21753,12 +22086,12 @@
 	exports.default = Store;
 
 /***/ },
-/* 193 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(194),
-	    createAssigner = __webpack_require__(207),
-	    keysIn = __webpack_require__(220);
+	var copyObject = __webpack_require__(197),
+	    createAssigner = __webpack_require__(210),
+	    keysIn = __webpack_require__(223);
 
 	/**
 	 * This method is like `_.assign` except that it iterates over own and
@@ -21799,11 +22132,11 @@
 
 
 /***/ },
-/* 194 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var assignValue = __webpack_require__(195),
-	    baseAssignValue = __webpack_require__(196);
+	var assignValue = __webpack_require__(198),
+	    baseAssignValue = __webpack_require__(199);
 
 	/**
 	 * Copies properties of `source` to `object`.
@@ -21845,11 +22178,11 @@
 
 
 /***/ },
-/* 195 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseAssignValue = __webpack_require__(196),
-	    eq = __webpack_require__(206);
+	var baseAssignValue = __webpack_require__(199),
+	    eq = __webpack_require__(209);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -21879,10 +22212,10 @@
 
 
 /***/ },
-/* 196 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var defineProperty = __webpack_require__(197);
+	var defineProperty = __webpack_require__(200);
 
 	/**
 	 * The base implementation of `assignValue` and `assignMergeValue` without
@@ -21910,10 +22243,10 @@
 
 
 /***/ },
-/* 197 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(198);
+	var getNative = __webpack_require__(201);
 
 	var defineProperty = (function() {
 	  try {
@@ -21927,11 +22260,11 @@
 
 
 /***/ },
-/* 198 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsNative = __webpack_require__(199),
-	    getValue = __webpack_require__(205);
+	var baseIsNative = __webpack_require__(202),
+	    getValue = __webpack_require__(208);
 
 	/**
 	 * Gets the native function at `key` of `object`.
@@ -21950,13 +22283,13 @@
 
 
 /***/ },
-/* 199 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(200),
-	    isMasked = __webpack_require__(202),
-	    isObject = __webpack_require__(201),
-	    toSource = __webpack_require__(204);
+	var isFunction = __webpack_require__(203),
+	    isMasked = __webpack_require__(205),
+	    isObject = __webpack_require__(204),
+	    toSource = __webpack_require__(207);
 
 	/**
 	 * Used to match `RegExp`
@@ -22003,11 +22336,11 @@
 
 
 /***/ },
-/* 200 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseGetTag = __webpack_require__(171),
-	    isObject = __webpack_require__(201);
+	    isObject = __webpack_require__(204);
 
 	/** `Object#toString` result references. */
 	var asyncTag = '[object AsyncFunction]',
@@ -22046,7 +22379,7 @@
 
 
 /***/ },
-/* 201 */
+/* 204 */
 /***/ function(module, exports) {
 
 	/**
@@ -22083,10 +22416,10 @@
 
 
 /***/ },
-/* 202 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var coreJsData = __webpack_require__(203);
+	var coreJsData = __webpack_require__(206);
 
 	/** Used to detect methods masquerading as native. */
 	var maskSrcKey = (function() {
@@ -22109,7 +22442,7 @@
 
 
 /***/ },
-/* 203 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var root = __webpack_require__(173);
@@ -22121,7 +22454,7 @@
 
 
 /***/ },
-/* 204 */
+/* 207 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -22153,7 +22486,7 @@
 
 
 /***/ },
-/* 205 */
+/* 208 */
 /***/ function(module, exports) {
 
 	/**
@@ -22172,7 +22505,7 @@
 
 
 /***/ },
-/* 206 */
+/* 209 */
 /***/ function(module, exports) {
 
 	/**
@@ -22215,11 +22548,11 @@
 
 
 /***/ },
-/* 207 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseRest = __webpack_require__(208),
-	    isIterateeCall = __webpack_require__(216);
+	var baseRest = __webpack_require__(211),
+	    isIterateeCall = __webpack_require__(219);
 
 	/**
 	 * Creates a function like `_.assign`.
@@ -22258,12 +22591,12 @@
 
 
 /***/ },
-/* 208 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var identity = __webpack_require__(209),
-	    overRest = __webpack_require__(210),
-	    setToString = __webpack_require__(212);
+	var identity = __webpack_require__(212),
+	    overRest = __webpack_require__(213),
+	    setToString = __webpack_require__(215);
 
 	/**
 	 * The base implementation of `_.rest` which doesn't validate or coerce arguments.
@@ -22281,7 +22614,7 @@
 
 
 /***/ },
-/* 209 */
+/* 212 */
 /***/ function(module, exports) {
 
 	/**
@@ -22308,10 +22641,10 @@
 
 
 /***/ },
-/* 210 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var apply = __webpack_require__(211);
+	var apply = __webpack_require__(214);
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
 	var nativeMax = Math.max;
@@ -22350,7 +22683,7 @@
 
 
 /***/ },
-/* 211 */
+/* 214 */
 /***/ function(module, exports) {
 
 	/**
@@ -22377,11 +22710,11 @@
 
 
 /***/ },
-/* 212 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseSetToString = __webpack_require__(213),
-	    shortOut = __webpack_require__(215);
+	var baseSetToString = __webpack_require__(216),
+	    shortOut = __webpack_require__(218);
 
 	/**
 	 * Sets the `toString` method of `func` to return `string`.
@@ -22397,12 +22730,12 @@
 
 
 /***/ },
-/* 213 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var constant = __webpack_require__(214),
-	    defineProperty = __webpack_require__(197),
-	    identity = __webpack_require__(209);
+	var constant = __webpack_require__(217),
+	    defineProperty = __webpack_require__(200),
+	    identity = __webpack_require__(212);
 
 	/**
 	 * The base implementation of `setToString` without support for hot loop shorting.
@@ -22425,7 +22758,7 @@
 
 
 /***/ },
-/* 214 */
+/* 217 */
 /***/ function(module, exports) {
 
 	/**
@@ -22457,7 +22790,7 @@
 
 
 /***/ },
-/* 215 */
+/* 218 */
 /***/ function(module, exports) {
 
 	/** Used to detect hot functions by number of calls within a span of milliseconds. */
@@ -22500,13 +22833,13 @@
 
 
 /***/ },
-/* 216 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var eq = __webpack_require__(206),
-	    isArrayLike = __webpack_require__(217),
-	    isIndex = __webpack_require__(219),
-	    isObject = __webpack_require__(201);
+	var eq = __webpack_require__(209),
+	    isArrayLike = __webpack_require__(220),
+	    isIndex = __webpack_require__(222),
+	    isObject = __webpack_require__(204);
 
 	/**
 	 * Checks if the given arguments are from an iteratee call.
@@ -22536,11 +22869,11 @@
 
 
 /***/ },
-/* 217 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(200),
-	    isLength = __webpack_require__(218);
+	var isFunction = __webpack_require__(203),
+	    isLength = __webpack_require__(221);
 
 	/**
 	 * Checks if `value` is array-like. A value is considered array-like if it's
@@ -22575,7 +22908,7 @@
 
 
 /***/ },
-/* 218 */
+/* 221 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -22616,7 +22949,7 @@
 
 
 /***/ },
-/* 219 */
+/* 222 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -22644,12 +22977,12 @@
 
 
 /***/ },
-/* 220 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayLikeKeys = __webpack_require__(221),
-	    baseKeysIn = __webpack_require__(232),
-	    isArrayLike = __webpack_require__(217);
+	var arrayLikeKeys = __webpack_require__(224),
+	    baseKeysIn = __webpack_require__(235),
+	    isArrayLike = __webpack_require__(220);
 
 	/**
 	 * Creates an array of the own and inherited enumerable property names of `object`.
@@ -22682,15 +23015,15 @@
 
 
 /***/ },
-/* 221 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseTimes = __webpack_require__(222),
-	    isArguments = __webpack_require__(223),
-	    isArray = __webpack_require__(225),
-	    isBuffer = __webpack_require__(226),
-	    isIndex = __webpack_require__(219),
-	    isTypedArray = __webpack_require__(228);
+	var baseTimes = __webpack_require__(225),
+	    isArguments = __webpack_require__(226),
+	    isArray = __webpack_require__(228),
+	    isBuffer = __webpack_require__(229),
+	    isIndex = __webpack_require__(222),
+	    isTypedArray = __webpack_require__(231);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -22737,7 +23070,7 @@
 
 
 /***/ },
-/* 222 */
+/* 225 */
 /***/ function(module, exports) {
 
 	/**
@@ -22763,10 +23096,10 @@
 
 
 /***/ },
-/* 223 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsArguments = __webpack_require__(224),
+	var baseIsArguments = __webpack_require__(227),
 	    isObjectLike = __webpack_require__(179);
 
 	/** Used for built-in method references. */
@@ -22805,7 +23138,7 @@
 
 
 /***/ },
-/* 224 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseGetTag = __webpack_require__(171),
@@ -22829,7 +23162,7 @@
 
 
 /***/ },
-/* 225 */
+/* 228 */
 /***/ function(module, exports) {
 
 	/**
@@ -22861,11 +23194,11 @@
 
 
 /***/ },
-/* 226 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(173),
-	    stubFalse = __webpack_require__(227);
+	    stubFalse = __webpack_require__(230);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -22906,7 +23239,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(182)(module)))
 
 /***/ },
-/* 227 */
+/* 230 */
 /***/ function(module, exports) {
 
 	/**
@@ -22930,12 +23263,12 @@
 
 
 /***/ },
-/* 228 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsTypedArray = __webpack_require__(229),
-	    baseUnary = __webpack_require__(230),
-	    nodeUtil = __webpack_require__(231);
+	var baseIsTypedArray = __webpack_require__(232),
+	    baseUnary = __webpack_require__(233),
+	    nodeUtil = __webpack_require__(234);
 
 	/* Node.js helper references. */
 	var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
@@ -22963,11 +23296,11 @@
 
 
 /***/ },
-/* 229 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseGetTag = __webpack_require__(171),
-	    isLength = __webpack_require__(218),
+	    isLength = __webpack_require__(221),
 	    isObjectLike = __webpack_require__(179);
 
 	/** `Object#toString` result references. */
@@ -23029,7 +23362,7 @@
 
 
 /***/ },
-/* 230 */
+/* 233 */
 /***/ function(module, exports) {
 
 	/**
@@ -23049,7 +23382,7 @@
 
 
 /***/ },
-/* 231 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(174);
@@ -23078,12 +23411,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(182)(module)))
 
 /***/ },
-/* 232 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(201),
-	    isPrototype = __webpack_require__(233),
-	    nativeKeysIn = __webpack_require__(234);
+	var isObject = __webpack_require__(204),
+	    isPrototype = __webpack_require__(236),
+	    nativeKeysIn = __webpack_require__(237);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -23117,7 +23450,7 @@
 
 
 /***/ },
-/* 233 */
+/* 236 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -23141,7 +23474,7 @@
 
 
 /***/ },
-/* 234 */
+/* 237 */
 /***/ function(module, exports) {
 
 	/**
@@ -23167,7 +23500,7 @@
 
 
 /***/ },
-/* 235 */
+/* 238 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23179,7 +23512,7 @@
 	var STATE_TYPE = exports.STATE_TYPE = 'chromex.state';
 
 /***/ },
-/* 236 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23188,7 +23521,7 @@
 	  value: true
 	});
 
-	var _constants = __webpack_require__(235);
+	var _constants = __webpack_require__(238);
 
 	/**
 	 * Responder for promisified results
@@ -23258,7 +23591,7 @@
 	};
 
 /***/ },
-/* 237 */
+/* 240 */
 /***/ function(module, exports) {
 
 	"use strict";
