@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Tyler Shaddix",
+  "author": "Arda Ilgaz",
   "dependencies": {
+    "babel-loader": "^6.3.2",
     "eslint": "^3.15.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
@@ -18,7 +19,8 @@
     "react-chrome-redux": "0.0.7",
     "react-dom": "^0.14.3",
     "react-redux": "^4.0.0",
-    "redux": "^3.0.4"
+    "redux": "^3.0.4",
+    "twitch.tv": "^2.0.1"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.1.0",
@@ -31,6 +33,6 @@
     "gulp-rename": "^1.2.2",
     "gulp-util": "^3.0.7",
     "rimraf": "^2.5.0",
-    "webpack": "^1.12.11"
+    "webpack": "^2.2.1"
   }
 }
