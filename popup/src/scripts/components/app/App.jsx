@@ -24,12 +24,14 @@ class App extends Component {
         return '#' + ('000000' + hex.toString(16)).substr(-6);
     }
     render() {
-        const channelList = this.state.channels.map((item, key) =>
-            <Card background={this.getRandomColor()}>
-                <Channel channelName={item} />
-            </Card>,
-      );
-
+        const channelList = this.state.channels.map((item, key) => {
+            const channelIndex = key;
+            return (
+                <Card background={this.getRandomColor()} key={channelIndex}>
+                    <Channel channelName={item} />
+                </Card>
+            );
+        });
         return (
             <CardStack
               height={200}

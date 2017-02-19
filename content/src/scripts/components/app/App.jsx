@@ -24,10 +24,10 @@ class App extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    count: state.count
-  };
-};
+const mapStateToProps = state => ({
+    state: {
+        count: state.count,
+    },
+});
 
 export default connect(mapStateToProps)(App);

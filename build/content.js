@@ -11835,9 +11835,9 @@ anchor.id = 'rcr-anchor';
 document.body.insertBefore(anchor, document.body.childNodes[0]);
 
 (0, _reactDom.render)(_react2.default.createElement(
-  _reactRedux.Provider,
-  { store: proxyStore },
-  _react2.default.createElement(_App2.default, null)
+    _reactRedux.Provider,
+    { store: proxyStore },
+    _react2.default.createElement(_App2.default, null)
 ), document.getElementById('rcr-anchor'));
 
 /***/ }),
@@ -11909,7 +11909,9 @@ var App = function (_Component) {
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
-        count: state.count
+        state: {
+            count: state.count
+        }
     };
 };
 

@@ -11817,24 +11817,24 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(184);
 
-var _App = __webpack_require__(112);
-
-var _App2 = _interopRequireDefault(_App);
-
 var _reactChromeRedux = __webpack_require__(181);
 
 var _reactRedux = __webpack_require__(77);
 
+var _App = __webpack_require__(112);
+
+var _App2 = _interopRequireDefault(_App);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var proxyStore = new _reactChromeRedux.Store({
-  portName: 'example'
+    portName: 'example'
 });
 
 (0, _reactDom.render)(_react2.default.createElement(
-  _reactRedux.Provider,
-  { store: proxyStore },
-  _react2.default.createElement(_App2.default, null)
+    _reactRedux.Provider,
+    { store: proxyStore },
+    _react2.default.createElement(_App2.default, null)
 ), document.getElementById('app'));
 
 /***/ }),
@@ -11907,13 +11907,13 @@ var App = function (_Component) {
             var _this3 = this;
 
             var channelList = this.state.channels.map(function (item, key) {
+                var channelIndex = key;
                 return _react2.default.createElement(
                     _reactCardstack.Card,
-                    { background: _this3.getRandomColor() },
+                    { background: _this3.getRandomColor(), key: channelIndex },
                     _react2.default.createElement(_Channel2.default, { channelName: item })
                 );
             });
-
             return _react2.default.createElement(
                 _reactCardstack.CardStack,
                 {
@@ -12066,22 +12066,6 @@ var Channel = function (_Component) {
     }
 
     _createClass(Channel, [{
-        key: 'checkIfChannelOnline',
-        value: function checkIfChannelOnline(channel) {
-            var url = 'https://api.twitch.tv/kraken/streams/' + channel + '?client_id=qf8via2w923otpjjcjo1jeg6slulq4';
-            return fetch(url).then(function (response) {
-                return response.json();
-            });
-        }
-    }, {
-        key: 'pullOfflineChannelData',
-        value: function pullOfflineChannelData(channel) {
-            var url = 'https://api.twitch.tv/kraken/channels/' + channel + '?client_id=qf8via2w923otpjjcjo1jeg6slulq4';
-            return fetch(url).then(function (response) {
-                return response.json();
-            });
-        }
-    }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
             var _this2 = this;
@@ -12105,6 +12089,22 @@ var Channel = function (_Component) {
             });
         }
     }, {
+        key: 'checkIfChannelOnline',
+        value: function checkIfChannelOnline(channel) {
+            var url = 'https://api.twitch.tv/kraken/streams/' + channel + '?client_id=qf8via2w923otpjjcjo1jeg6slulq4';
+            return fetch(url).then(function (response) {
+                return response.json();
+            });
+        }
+    }, {
+        key: 'pullOfflineChannelData',
+        value: function pullOfflineChannelData(channel) {
+            var url = 'https://api.twitch.tv/kraken/channels/' + channel + '?client_id=qf8via2w923otpjjcjo1jeg6slulq4';
+            return fetch(url).then(function (response) {
+                return response.json();
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             if (!this.state.data) {
@@ -12116,8 +12116,7 @@ var Channel = function (_Component) {
                 _react2.default.createElement(
                     'h1',
                     null,
-                    this.props.channelName,
-                    ' '
+                    this.props.channelName
                 ),
                 _react2.default.createElement(_Avatar2.default, { size: 100, src: this.state.data.logo }),
                 _react2.default.createElement(

@@ -1193,18 +1193,18 @@ function warning(message) {
 
 var _redux = __webpack_require__(22);
 
+var _reactChromeRedux = __webpack_require__(71);
+
 var _reducers = __webpack_require__(26);
 
 var _reducers2 = _interopRequireDefault(_reducers);
-
-var _reactChromeRedux = __webpack_require__(71);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var store = (0, _redux.createStore)(_reducers2.default, {});
 
 (0, _reactChromeRedux.wrapStore)(store, {
-  portName: 'example'
+    portName: 'example'
 });
 
 /***/ }),
@@ -1215,20 +1215,20 @@ var store = (0, _redux.createStore)(_reducers2.default, {});
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 var initialState = 0;
 
 exports.default = function () {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
-  var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+    var action = arguments[1];
 
-  switch (action.type) {
-    case 'ADD_COUNT':
-      return state + (action.payload || 1);
-    default:
-      return state;
-  }
+    switch (action.type) {
+        case 'ADD_COUNT':
+            return state + (action.payload || 1);
+        default:
+            return state;
+    }
 };
 
 /***/ }),
@@ -1239,7 +1239,7 @@ exports.default = function () {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _redux = __webpack_require__(22);
@@ -1251,7 +1251,7 @@ var _count2 = _interopRequireDefault(_count);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = (0, _redux.combineReducers)({
-  count: _count2.default
+    count: _count2.default
 });
 
 /***/ }),

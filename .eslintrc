@@ -8,20 +8,15 @@
     "rules": {
         // indentation
         "indent": [ 2, 4 ],
-
         // spacing
         "template-curly-spacing": [ 2, "always" ],
         "array-bracket-spacing": [ 2, "always" ],
         "object-curly-spacing": [ 2, "always" ],
         "computed-property-spacing": [ 2, "always" ],
-
         // code arrangement matter
         "no-use-before-define": [ 2, { "functions": false } ],
-
-
         // make it meaningful
         "prefer-const": 1,
-
         // keep it simple
         "complexity": [ 1, 5 ],
         "linebreak-style": "off",
